@@ -52,10 +52,6 @@ Ykk.Classes.Ajax  = (function (){
         this.socket.onmessage = function(event){
             this.parent.success(event.data);
             this.parent.socket.hasFinished = false;
-            if (Ykk.ajaxSockets.length > 1){
-                this.parent.socket.close();
-                Ykk.ajaxSockets.splice(Ykk.ajaxSockets.indexOf(this.parent.socket), 1);
-            }
         }
     };
 
