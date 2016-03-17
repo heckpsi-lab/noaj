@@ -92,7 +92,6 @@ Ykk.Classes.RealTime = (function (){
     };
 
     RealTime.prototype.stop = function(){
-        this.socket.hasFinished = true;
         this.socket.close();
     };
 
