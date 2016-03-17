@@ -16,8 +16,8 @@ Release: No release
 ## Getting Started
 
 ```javascript
+Ykk.ajaxUrl = "http://foo.com/yukkikaze-ajax";
 Ykk.ajax({
-  'url': 'http://foo.com/yukkikaze-ajax',
   'api': '/hello-world',
   'data': {'foo': 'bar'}
   'success': function(data){
