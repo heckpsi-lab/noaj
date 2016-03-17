@@ -26,7 +26,7 @@ Ykk.Ajax  = (function (){
 
     Ajax.prototype.send = function(param) {
         for (var i in Ykk.ajaxSockets){
-            if (Ykk.ajaxSockets[i].bufferedAmount == 0 && !Ykk.ajaxSockets[i].isReceiving){
+            if (!Ykk.ajaxSockets[i].isSending() && !Ykk.ajaxSockets[i].isReceiving){
                 this.socket = Ykk.ajaxSockets[i];
                 break;
             }
