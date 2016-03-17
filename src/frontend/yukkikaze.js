@@ -2,7 +2,8 @@ WebSocket.prototype.isSending = function(){
     return (this.bufferedAmount > 0);
 };
 
-WebSocket.prototype.isReceiving = false;
+WebSocket.prototype.hasFinished = true;
+WebSocket.prototype.isOldObject = false;
 
 var Ykk = {
     ajaxSockets: [],
@@ -12,8 +13,22 @@ var Ykk = {
     },
     realtime: function(param){
         return new this.RealTime(param);
+    },
+    gc: function(){
+        for (var i = 0; i < this.ajaxSockets.length; i++){
+            if (this.ajaxSockets[i].isOldObject){
+                this.ajaxSockets[i].close();
+                this.ajaxSockets.splice(i, 1);
+                i--;
+            } else if (this.ajaxSockets[i].hasFinished){
+                this.isOldObject(true)
+            }
+        }
+        setTimeout(Ykk.gc(), 5000);
     }
 };
+
+Ykk.gc();
 
 Ykk.Ajax  = (function (){
     function Ajax(param) {
@@ -26,8 +41,9 @@ Ykk.Ajax  = (function (){
 
     Ajax.prototype.send = function(param) {
         for (var i in Ykk.ajaxSockets){
-            if (!Ykk.ajaxSockets[i].isSending() && !Ykk.ajaxSockets[i].isReceiving){
+            if (!Ykk.ajaxSockets[i].hasFinished){
                 this.socket = Ykk.ajaxSockets[i];
+                this.socket.isOldObject = false;
                 break;
             }
         }
@@ -36,9 +52,9 @@ Ykk.Ajax  = (function (){
             Ykk.ajaxSockets.push(this.socket);
         }
         this.socket.send(JSON.stringify({api: param.api, data: param.data}));
-        this.socket.isReceiving = true;
         this.socket.onmessage = function(event){
             this.parent.success(event.data);
+            this.parent.socket.hasFinished = false;
             if (Ykk.ajaxSockets.length > 1){
                 this.parent.socket.close();
                 Ykk.ajaxSockets.splice(Ykk.ajaxSockets.indexOf(this.parent.socket), 1);
