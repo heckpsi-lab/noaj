@@ -4,11 +4,12 @@ WebSocket.prototype.isOldObject = false;
 var Ykk = {
     ajaxSockets: [],
     ajaxUrl: '',
+    Classes: {},
     ajax: function(param){
-        return (new Ykk.Ajax(param));
+        return (new Ykk.Classes.Ajax(param));
     },
     realtime: function(param){
-        return (new Ykk.RealTime(param));
+        return (new Ykk.Classes.RealTime(param));
     },
     gc: function(){
         for (var i = 0; i < this.ajaxSockets.length; i++){
@@ -26,7 +27,7 @@ var Ykk = {
 
 Ykk.gc();
 
-Ykk.Ajax  = (function (){
+Ykk.Classes.Ajax  = (function (){
     function Ajax(param) {
         this.api = param.api;
         this.data = param.data;
@@ -61,7 +62,7 @@ Ykk.Ajax  = (function (){
     return Ajax;
 }());
 
-Ykk.RealTime = (function (){
+Ykk.Classes.RealTime = (function (){
     function RealTime(param) {
         this.url = param.url;
         this.data = param.data;
@@ -91,6 +92,7 @@ Ykk.RealTime = (function (){
     };
 
     RealTime.prototype.stop = function(){
+        this.socket.hasFinished = true;
         this.socket.close();
     };
 
