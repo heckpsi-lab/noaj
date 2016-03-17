@@ -20,7 +20,7 @@ var Ykk = {
                 this.isOldObject(true)
             }
         }
-        setTimeout(Ykk.gc(), 5000);
+        setTimeout("Ykk.gc()", 5000);
     }
 };
 
