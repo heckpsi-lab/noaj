@@ -5,10 +5,10 @@ var Ykk = {
     ajaxSockets: [],
     ajaxUrl: '',
     ajax: function(param){
-        return new this.Ajax(param);
+        return (new Ykk.Ajax(param));
     },
     realtime: function(param){
-        return new this.RealTime(param);
+        return (new Ykk.RealTime(param));
     },
     gc: function(){
         for (var i = 0; i < this.ajaxSockets.length; i++){
@@ -56,7 +56,9 @@ Ykk.Ajax  = (function (){
                 Ykk.ajaxSockets.splice(Ykk.ajaxSockets.indexOf(this.parent.socket), 1);
             }
         }
-    }
+    };
+
+    return Ajax;
 }());
 
 Ykk.RealTime = (function (){
@@ -91,4 +93,6 @@ Ykk.RealTime = (function (){
     RealTime.prototype.stop = function(){
         this.socket.close();
     };
+
+    return RealTime;
 }());
