@@ -21,27 +21,27 @@ Ykk.Ajax  = (function (){
         this.data = param.data;
         this.success = param.success;
         this.failure = param.failure;
+        this.socket = null;
     }
 
     Ajax.prototype.send = function(param) {
-        var freeSocket = null;
         for (var i in Ykk.ajaxSockets){
             if (Ykk.ajaxSockets[i].bufferedAmount == 0 && !Ykk.ajaxSockets[i].isReceiving){
-                freeSocket = Ykk.ajaxSockets[i];
+                this.socket = Ykk.ajaxSockets[i];
                 break;
             }
         }
-        if (freeSocket == null){
-            freeSocket = new WebSocket(Ykk.ajaxUrl);
-            Ykk.ajaxSockets.push(freeSocket);
+        if (this.socket == null){
+            this.socket = new WebSocket(Ykk.ajaxUrl);
+            Ykk.ajaxSockets.push(this.socket);
         }
-        freeSocket.send(JSON.stringify({api: param.api, data: param.data}));
-        freeSocket.isReceiving = true;
-        freeSocket.onmessage = function(event){
-            this.success(event.data);
+        this.socket.send(JSON.stringify({api: param.api, data: param.data}));
+        this.socket.isReceiving = true;
+        this.socket.onmessage = function(event){
+            this.parent.success(event.data);
             if (Ykk.ajaxSockets.length > 1){
-                freeSocket.close();
-                Ykk.ajaxSockets.splice(Ykk.ajaxSockets.indexOf(freeSocket), 1);
+                this.parent.socket.close();
+                Ykk.ajaxSockets.splice(Ykk.ajaxSockets.indexOf(this.parent.socket), 1);
             }
         }
     }
@@ -63,9 +63,9 @@ Ykk.RealTime = (function (){
 
         this.socket.onmessage = function(event){
             var data = JSON.parse(event.data);
-            for (var e in this.event){
+            for (var e in this.parent.event){
                 if (e == data.event){
-                    this.event[e](data.data);
+                    this.parent.event[e](data.data);
                     break;
                 }
             }
