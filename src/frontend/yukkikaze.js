@@ -1,7 +1,3 @@
-WebSocket.prototype.isSending = function(){
-    return (this.bufferedAmount > 0);
-};
-
 WebSocket.prototype.hasFinished = true;
 WebSocket.prototype.isOldObject = false;
 
