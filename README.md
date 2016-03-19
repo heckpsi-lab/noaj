@@ -7,11 +7,27 @@ Yukkikaze.js provides a set of APIs to build its own protocol on the WebSocket, 
 
 ## Developing Status
 
+Front-end framework:
+
 Alpha: No release
 
 Beta: No release
 
 Release: No release
+
+
+
+Back-end framework:
+
+Ruby (for sinatra): [![Gem Version](https://badge.fury.io/rb/sinatra-yukkikaze.svg)](https://badge.fury.io/rb/sinatra-yukkikaze)
+
+Ruby (for Rails): No release
+
+Node.js (for express.js): No release
+
+C++(for safaia-framework): No release
+
+Go(for Martini): No release
 
 ## Getting Started
 
@@ -44,4 +60,3 @@ chat.send({
   'data': {'msg': 'hello'}
 });
 ```
-
