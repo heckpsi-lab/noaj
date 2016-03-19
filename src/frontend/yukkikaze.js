@@ -2,6 +2,7 @@ WebSocket.prototype.hasFinished = true;
 WebSocket.prototype.isOldObject = false;
 
 var Ykk = {
+    debug: false,
     ajaxSockets: [],
     ajaxUrl: '',
     Classes: {},
@@ -12,15 +13,19 @@ var Ykk = {
         return (new Ykk.Classes.RealTime(param));
     },
     gc: function(){
+        if(Ykk.debug){var collect_count = 0; var total_count = 0;}
         for (var i = 0; i < this.ajaxSockets.length; i++){
             if (this.ajaxSockets[i].isOldObject){
                 this.ajaxSockets[i].close();
                 this.ajaxSockets.splice(i, 1);
+                if(Ykk.debug){collect_count++;}
                 i--;
             } else if (this.ajaxSockets[i].hasFinished){
-                this.isOldObject(true)
+                this.isOldObject(true);
             }
+            if(Ykk.debug){total_count++;}
         }
+        if(Ykk.debug){console.log("[Yukkikaze.js][GC]Info: Collected:" + collect_count + " Total:"+ total_count)}
         setTimeout("Ykk.gc()", 5000);
     }
 };
