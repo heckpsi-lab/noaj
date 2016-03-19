@@ -53,10 +53,12 @@ Ykk.Classes.Ajax  = (function (){
             this.socket = new WebSocket(Ykk.ajaxUrl);
             Ykk.ajaxSockets.push(this.socket);
         }
+
+        this.socket.hasFinished = false;
         this.socket.send(JSON.stringify({api: param.api, data: param.data}));
         this.socket.onmessage = function(event){
             this.parent.success(event.data);
-            this.parent.socket.hasFinished = false;
+            this.parent.socket.hasFinished = true;
         }
     };
 

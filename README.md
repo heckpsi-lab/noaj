@@ -25,9 +25,11 @@ Ruby (for Rails): No release
 
 Node.js (for express.js): No release
 
-C++(for safaia-framework): No release
+C++ (for safaia-framework): No release
 
-Go(for Martini): No release
+Go (for Martini): No release
+
+Rust: No Release
 
 ## Getting Started
 
