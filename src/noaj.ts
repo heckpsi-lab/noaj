@@ -3,8 +3,11 @@ interface IN {
     url: string;
     debug: boolean;
     compression: boolean;
+    secured: boolean;
     connections: Array<Noaj.Connection>;
     gc(): void;
+    autoGc(): void;
+    autoGcInterval: number;
     request(param: Noaj.IRequest): Noaj.Request;
 }
 
@@ -13,6 +16,7 @@ var N: IN = {
     url: '',
     debug: false,
     compression: false,
+    secured: false,
     connections: [],
     request: function (param: Noaj.IRequest) {
         return new Noaj.Request(param);
@@ -35,7 +39,11 @@ var N: IN = {
             if (N.debug) totalCount++;
         }
         if (N.debug) console.log("[Noaj][GC] Info: Collected: " + collectCount + ", Total: " + totalCount)
-        setTimeout(() => N.gc(), 5000);
+    },
+    autoGcInterval: 5000,
+    autoGc: function() {
+        N.gc();
+        setTimeout(() => N.autoGc(), N.autoGcInterval);
     }
 }
 
@@ -45,7 +53,7 @@ module Noaj {
         finished: boolean;
         old: boolean;
         constructor(url: string) {
-            this.socket = new WebSocket(url);
+            this.socket = new WebSocket((N.secured? 'wss://' : 'ws://') + url);
             this.finished = true;
             this.old = false;
         }
@@ -115,7 +123,7 @@ module Noaj {
 
         fallbackSend() {
             var ajaxRequest = new XMLHttpRequest();
-            ajaxRequest.open('POST', N.url, true);
+            ajaxRequest.open('POST', (N.secured ? 'https://' : 'http://') + N.url, true);
             ajaxRequest.send(JSON.stringify({
                 route: this.route,
                 data: this.data

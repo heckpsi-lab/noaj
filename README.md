@@ -34,7 +34,9 @@ NOAJ (Not Only Asynchronous JavaScript, formerly called [yukkikaze.js](https://g
 ## Getting Started
 
 ```javascript
-N.url = 'http://foo.bar/noaj'
+N.url = 'foo.bar/noaj';
+N.secured = false;
+N.compression = true;
 
 N.request({
     route: '/hello'
@@ -50,12 +52,13 @@ N.request({
 
 ## Developing Status
 
-| Feature            |      Alpha      | Beta | Release | Note |
-| ------------------ | :-------------: | :--: | :-----: | ---: |
-| AJAX-like API      | √ (since 0.0.1) |  ×   |    ×    |      |
-| WebSocket          | √ (since 0.0.1) |  ×   |    ×    |      |
-| AJAX Fallback      | √ (since 0.0.1) |  ×   |    ×    |      |
-| LZW Compression    | √ (since 0.0.2) |  ×   |    ×    |      |
-| Garbage Collection | √ (since 0.0.1) |  ×   |    ×    |      |
-| GC Tunning         |        ×        |  ×   |    ×    |      |
+| Feature               |      Alpha      | Beta | Release | Note |
+| --------------------- | :-------------: | :--: | :-----: | ---: |
+| AJAX-like API         | √ (since 0.0.1) |  ×   |    ×    |      |
+| WebSocket             | √ (since 0.0.1) |  ×   |    ×    |      |
+| AJAX Fallback         | √ (since 0.0.1) |  ×   |    ×    |      |
+| LZW Compression       | √ (since 0.0.2) |  ×   |    ×    |      |
+| Garbage Collection    | √ (since 0.0.1) |  ×   |    ×    |      |
+| GC Tuning             |        ×        |  ×   |    ×    |      |
+| Secured Communication |        ×        |  ×   |    ×    |      |
 

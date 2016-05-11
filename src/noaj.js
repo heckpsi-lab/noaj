@@ -3,6 +3,7 @@ var N = {
     url: '',
     debug: false,
     compression: false,
+    secured: false,
     connections: [],
     request: function (param) {
         return new Noaj.Request(param);
@@ -29,14 +30,18 @@ var N = {
         }
         if (N.debug)
             console.log("[Noaj][GC] Info: Collected: " + collectCount + ", Total: " + totalCount);
-        setTimeout(function () { return N.gc(); }, 5000);
+    },
+    autoGcInterval: 5000,
+    autoGc: function () {
+        N.gc();
+        setTimeout(function () { return N.autoGc(); }, N.autoGcInterval);
     }
 };
 var Noaj;
 (function (Noaj) {
     var Connection = (function () {
         function Connection(url) {
-            this.socket = new WebSocket(url);
+            this.socket = new WebSocket((N.secured ? 'wss://' : 'ws://') + url);
             this.finished = true;
             this.old = false;
         }
@@ -97,7 +102,7 @@ var Noaj;
         };
         Request.prototype.fallbackSend = function () {
             var ajaxRequest = new XMLHttpRequest();
-            ajaxRequest.open('POST', N.url, true);
+            ajaxRequest.open('POST', (N.secured ? 'https://' : 'http://') + N.url, true);
             ajaxRequest.send(JSON.stringify({
                 route: this.route,
                 data: this.data
