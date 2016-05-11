@@ -20,14 +20,14 @@ NOAJ (Not Only Asynchronous JavaScript) is a communication framework which provi
 ## Getting Started
 
 ```javascript
-N.url = 'http://foo.bar/noja'
+N.url = 'http://foo.bar/noaj'
 
 N.request({
     route: '/hello'
 }).send();
 
 N.request({
-    route: 'hello',
+    route: '/hello',
     data: {foo: 'bar'}
     success: function(data){
         console.log(data);

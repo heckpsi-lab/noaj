@@ -124,7 +124,7 @@ N.request({
 }).send();
 
 N.request({
-    route: 'hello', 
+    route: '/hello', 
     data: {foo: 'bar'}
     success: function(data: string){
         console.log(data);
