@@ -1,7 +1,7 @@
 # NOAJ
 
 ## What is NOAJ
-NOAJ (Not Only Asynchronous JavaScript) is a communication framework which provides AJAX-like API based on WebSocket. It could dynamically manage the socket pool to reduce the redundant package headers. It could also fallback to AJAX if the browser does not support WebSocket feature.
+NOAJ (Not Only Asynchronous JavaScript, formerly called [yukkikaze.js](https://github.com/dsh0416/yukkikaze.js)) is a communication framework which provides AJAX-like API based on WebSocket. It could dynamically manage the socket pool to reduce the redundant package headers. It could also fallback to AJAX if the browser does not support WebSocket feature.
 
 ## Developing Status
 
