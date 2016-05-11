@@ -118,6 +118,61 @@ module Noaj {
     }
 }
 
+class TZW {
+    static encode(str: string):ArrayBuffer {
+        var dict:Object = {};
+        var data:Array<string> = (str + "").split("");
+        var out:Array<number> = [];
+        var buffer:ArrayBuffer;
+        var res:Array<string> = [];
+        var currChar:string;
+        var phrase:string = data[0];
+        var code:number = 65536;
+        for (var i = 1; i < data.length; i++) {
+            currChar = data[i];
+            if (dict[phrase + currChar] != null) {
+                phrase += currChar;
+            } else {
+                out.push(phrase.length > 1 ? dict[phrase] : phrase.charCodeAt(0));
+                dict[phrase + currChar] = code;
+                code++;
+                phrase = currChar;
+            }
+        }
+        out.push(phrase.length > 1 ? dict[phrase] : phrase.charCodeAt(0));
+        buffer = new ArrayBuffer(out.length);
+        for (var i = 0; i < out.length; i++){
+            buffer[i] = out[i];
+        }
+        return buffer;
+    }
+    static decode(str: ArrayBuffer):string {
+        var dict:Object = {};
+        var data:ArrayBuffer = str;
+        var currChar:string = String.fromCharCode(data[0]);
+        var oldPhrase:string = currChar;
+        var out:Array<string> = [currChar];
+        var res:string = "";
+        var code:number = 65536;
+        var phrase:string;
+        for (var i = 1; i < data.byteLength; i++) {
+            var currCode:number = data[i];
+            if (currCode < 65536) {
+                phrase = String.fromCharCode(data[i]);
+            }
+            else {
+                phrase = dict[currCode] ? dict[currCode] : (oldPhrase + currChar);
+            }
+            out.push(phrase);
+            currChar = phrase.charAt(0);
+            dict[code] = oldPhrase + currChar;
+            code++;
+            oldPhrase = phrase;
+        }
+        return out.join("");
+    }
+}
+
 N.gc();
 
 /*
