@@ -7,10 +7,12 @@ NOAJ (Not Only Asynchronous JavaScript, formerly called [yukkikaze.js](https://g
 
 ### Front-end
 
-|            | Alpha       | Beta | Release |
-| ---------- | ----------- | ---- | ------- |
-| TypeScript | 0.0.1-alpha | ×    | ×       |
-| JavaScript | 0.0.1-alpha | ×    | ×       |
+|                | Alpha       | Beta | Release |
+| -------------- | ----------- | ---- | ------- |
+| TypeScript     | 0.0.1-alpha | ×    | ×       |
+| JavaScript     | 0.0.1-alpha | ×    | ×       |
+| Android (Java) | ×           | ×    | ×       |
+| iOS (Swift)    | ×           | ×    | ×       |
 
 ### Back-end
 
