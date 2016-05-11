@@ -1,7 +1,8 @@
 var N = {
-    VERSION: '0.0.1-alpha',
+    VERSION: '0.0.2-alpha',
     url: '',
     debug: false,
+    compression: false,
     connections: [],
     request: function (param) {
         return new Noaj.Request(param);
@@ -35,7 +36,7 @@ var Noaj;
 (function (Noaj) {
     var Connection = (function () {
         function Connection(url) {
-            this.socket = new WebSocket(url.toString());
+            this.socket = new WebSocket(url);
             this.finished = true;
             this.old = false;
         }
@@ -49,11 +50,9 @@ var Noaj;
             if (param.success != null) {
                 this.success = param.success;
             }
-            else {
-                this.success = function () { };
-            }
             this.connection = null;
         }
+        Request.prototype.success = function (data) { };
         Request.prototype.send = function () {
             try {
                 for (var key in N.connections) {
@@ -79,12 +78,14 @@ var Noaj;
                 }.bind(this);
             }
             catch (error) {
+                if (N.debug)
+                    console.log("[Noaj][WebSocket] Error: Unable to proceed with WebSocket, falling back to AJAX. " + error);
                 this.fallbackSend();
             }
         };
         Request.prototype.fallbackSend = function () {
             var ajaxRequest = new XMLHttpRequest();
-            ajaxRequest.open('POST', N.url.toString(), true);
+            ajaxRequest.open('POST', N.url, true);
             ajaxRequest.send(JSON.stringify({
                 route: this.route,
                 data: this.data

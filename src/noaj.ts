@@ -1,16 +1,18 @@
 interface IN {
-    VERSION: String;
-    url: String;
-    debug: Boolean;
+    VERSION: string;
+    url: string;
+    debug: boolean;
+    compression: boolean;
     connections: Array<Noaj.Connection>;
-    gc: Function;
+    gc(): void;
     request(param: Noaj.IRequest): Noaj.Request;
 }
 
 var N: IN = {
-    VERSION: '0.0.1-alpha',
+    VERSION: '0.0.2-alpha',
     url: '',
     debug: false,
+    compression: false,
     connections: [],
     request: function (param: Noaj.IRequest) {
         return new Noaj.Request(param);
@@ -40,26 +42,26 @@ var N: IN = {
 module Noaj {
     export class Connection {
         socket: WebSocket;
-        finished: Boolean;
-        old: Boolean;
-        constructor(url: String) {
-            this.socket = new WebSocket(url.toString());
+        finished: boolean;
+        old: boolean;
+        constructor(url: string) {
+            this.socket = new WebSocket(url);
             this.finished = true;
             this.old = false;
         }
     }
 
     export interface IRequest {
-        route: String;
+        route: string;
         data?: Object;
-        success?: Function;
-        failure?: Function;
+        success?(data: string):void;
+        failure?():void;
     }
 
     export class Request {
-        route: String;
+        route: string;
         data: Object;
-        success: Function;
+        success(data: string):void {}
         connection: Connection;
 
         constructor(param: IRequest) {
@@ -67,8 +69,6 @@ module Noaj {
             this.data = param.data;
             if (param.success != null) {
                 this.success = param.success;
-            } else {
-                this.success = function () { };
             }
             this.connection = null;
         }
@@ -97,13 +97,14 @@ module Noaj {
                     this.connection.finished = true;
                 }.bind(this);
             } catch (error) {
+                if (N.debug) console.log("[Noaj][WebSocket] Error: Unable to proceed with WebSocket, falling back to AJAX. " + error)
                 this.fallbackSend();
             }
         }
 
         fallbackSend() {
             var ajaxRequest = new XMLHttpRequest();
-            ajaxRequest.open('POST', N.url.toString(), true);
+            ajaxRequest.open('POST', N.url, true);
             ajaxRequest.send(JSON.stringify({
                 route: this.route,
                 data: this.data
