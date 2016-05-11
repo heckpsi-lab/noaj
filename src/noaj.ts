@@ -54,14 +54,14 @@ module Noaj {
     export interface IRequest {
         route: string;
         data?: Object;
-        success?(data: string):void;
-        failure?():void;
+        success?(data: string): void;
+        failure?(): void;
     }
 
     export class Request {
         route: string;
         data: Object;
-        success(data: string):void {}
+        success(data: string): void { }
         connection: Connection;
 
         constructor(param: IRequest) {
@@ -88,14 +88,25 @@ module Noaj {
                     N.connections.push(this.connection);
                 }
                 this.connection.finished = false;
-                this.connection.socket.send(JSON.stringify({
-                    route: this.route,
-                    data: this.data
-                }));
-                this.connection.socket.onmessage = function (ev: MessageEvent) {
-                    this.success(ev.data);
-                    this.connection.finished = true;
-                }.bind(this);
+                if (N.compression) {
+                    this.connection.socket.send(LZW.encode(JSON.stringify({
+                        route: this.route,
+                        data: this.data
+                    })));
+                    this.connection.socket.onmessage = function (ev: MessageEvent) {
+                        this.success(LZW.decode(ev.data));
+                        this.connection.finished = true;
+                    }.bind(this);
+                } else {
+                    this.connection.socket.send(JSON.stringify({
+                        route: this.route,
+                        data: this.data
+                    }));
+                    this.connection.socket.onmessage = function (ev: MessageEvent) {
+                        this.success(ev.data);
+                        this.connection.finished = true;
+                    }.bind(this);
+                }
             } catch (error) {
                 if (N.debug) console.log("[Noaj][WebSocket] Error: Unable to proceed with WebSocket, falling back to AJAX. " + error)
                 this.fallbackSend();
@@ -120,17 +131,17 @@ module Noaj {
 }
 
 class LZW {
-    static dictSize:number = 57344;
-    
-    static encode(str: string):ArrayBuffer {
-        var dict:Object = {};
-        var data:Array<string> = (str + "").split("");
-        var out:Array<number> = [];
-        var buffer:ArrayBuffer;
-        var res:Array<string> = [];
-        var currChar:string;
-        var phrase:string = data[0];
-        var code:number = LZW.dictSize;
+    static dictSize: number = 57344;
+
+    static encode(str: string): ArrayBuffer {
+        var dict: Object = {};
+        var data: Array<string> = (str + "").split("");
+        var out: Array<number> = [];
+        var buffer: ArrayBuffer;
+        var res: Array<string> = [];
+        var currChar: string;
+        var phrase: string = data[0];
+        var code: number = LZW.dictSize;
         for (var i = 1; i < data.length; i++) {
             currChar = data[i];
             if (dict['_' + phrase + currChar] != null) {
@@ -144,22 +155,22 @@ class LZW {
         }
         out.push(phrase.length > 1 ? dict['_' + phrase] : phrase.charCodeAt(0));
         buffer = new ArrayBuffer(out.length);
-        for (var i = 0; i < out.length; i++){
+        for (var i = 0; i < out.length; i++) {
             buffer[i] = out[i];
         }
         return buffer;
     }
-    static decode(str: ArrayBuffer):string {
-        var dict:Object = {};
-        var data:ArrayBuffer = str;
-        var currChar:string = String.fromCharCode(data[0]);
-        var oldPhrase:string = currChar;
-        var out:Array<string> = [currChar];
-        var res:string = "";
-        var code:number = LZW.dictSize;
-        var phrase:string;
+    static decode(str: ArrayBuffer): string {
+        var dict: Object = {};
+        var data: ArrayBuffer = str;
+        var currChar: string = String.fromCharCode(data[0]);
+        var oldPhrase: string = currChar;
+        var out: Array<string> = [currChar];
+        var res: string = "";
+        var code: number = LZW.dictSize;
+        var phrase: string;
         for (var i = 1; i < data.byteLength; i++) {
-            var currCode:number = data[i];
+            var currCode: number = data[i];
             if (currCode < LZW.dictSize) {
                 phrase = String.fromCharCode(data[i]);
             }
@@ -175,18 +186,4 @@ class LZW {
         return out.join("");
     }
 }
-
 N.gc();
-
-/*
-N.request({
-    route: 'test'
-}).send();
-
-N.request({
-    route: '/hello', 
-    data: {foo: 'bar'}
-    success: function(data: string){
-        console.log(data);
-}}).send();
-*/

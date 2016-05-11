@@ -9,8 +9,8 @@ NOAJ (Not Only Asynchronous JavaScript, formerly called [yukkikaze.js](https://g
 
 |                | Alpha       | Beta | Release |
 | -------------- | ----------- | ---- | ------- |
-| TypeScript     | 0.0.1-alpha | ×    | ×       |
-| JavaScript     | 0.0.1-alpha | ×    | ×       |
+| TypeScript     | 0.0.2-alpha | ×    | ×       |
+| JavaScript     | 0.0.2-alpha | ×    | ×       |
 | Android (Java) | ×           | ×    | ×       |
 | iOS (Swift)    | ×           | ×    | ×       |
 
@@ -55,7 +55,7 @@ N.request({
 | AJAX-like API      | √ (since 0.0.1) |  ×   |    ×    |      |
 | WebSocket          | √ (since 0.0.1) |  ×   |    ×    |      |
 | AJAX Fallback      | √ (since 0.0.1) |  ×   |    ×    |      |
-| LZW Compression    |    Partially    |  ×   |    ×    |      |
+| LZW Compression    | √ (since 0.0.2) |  ×   |    ×    |      |
 | Garbage Collection | √ (since 0.0.1) |  ×   |    ×    |      |
 | GC Tunning         |        ×        |  ×   |    ×    |      |
 

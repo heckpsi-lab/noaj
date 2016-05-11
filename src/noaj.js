@@ -68,14 +68,26 @@ var Noaj;
                     N.connections.push(this.connection);
                 }
                 this.connection.finished = false;
-                this.connection.socket.send(JSON.stringify({
-                    route: this.route,
-                    data: this.data
-                }));
-                this.connection.socket.onmessage = function (ev) {
-                    this.success(ev.data);
-                    this.connection.finished = true;
-                }.bind(this);
+                if (N.compression) {
+                    this.connection.socket.send(LZW.encode(JSON.stringify({
+                        route: this.route,
+                        data: this.data
+                    })));
+                    this.connection.socket.onmessage = function (ev) {
+                        this.success(LZW.decode(ev.data));
+                        this.connection.finished = true;
+                    }.bind(this);
+                }
+                else {
+                    this.connection.socket.send(JSON.stringify({
+                        route: this.route,
+                        data: this.data
+                    }));
+                    this.connection.socket.onmessage = function (ev) {
+                        this.success(ev.data);
+                        this.connection.finished = true;
+                    }.bind(this);
+                }
             }
             catch (error) {
                 if (N.debug)
@@ -161,15 +173,3 @@ var LZW = (function () {
     return LZW;
 }());
 N.gc();
-/*
-N.request({
-    route: 'test'
-}).send();
-
-N.request({
-    route: '/hello',
-    data: {foo: 'bar'}
-    success: function(data: string){
-        console.log(data);
-}}).send();
-*/ 
