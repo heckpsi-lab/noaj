@@ -5,19 +5,17 @@ NOAJ (Not Only Asynchronous JavaScript) is a communication framework which provi
 
 ## Developing Status
 
-Front-end framework:
+### Front-end
 
-TypeScript: No release yet
+| TypeScript     | JavaScript     |
+| -------------- | -------------- |
+| No release yet | No release yet |
 
-JavaScript: No release yet
+### Back-end
 
-
-
-Back-end framework:
-
-Ruby (for sinatra): No release yet
-
-Ruby (for Rails): No release yet
+| Ruby (Sinatra) | Ruby (Rails)   | Node.js        | C++11          |
+| -------------- | -------------- | -------------- | -------------- |
+| No release yet | No release yet | No release yet | No release yet |
 
 ## Getting Started
 
