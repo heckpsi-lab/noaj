@@ -1,4 +1,5 @@
 interface IN {
+    VERSION: String;
     url: String;
     debug: Boolean;
     connections: Array<Noaj.Connection>;
@@ -7,6 +8,7 @@ interface IN {
 }
 
 var N: IN = {
+    VERSION: '0.0.1-alpha',
     url: '',
     debug: false,
     connections: [],

@@ -7,9 +7,9 @@ NOAJ (Not Only Asynchronous JavaScript) is a communication framework which provi
 
 ### Front-end
 
-| TypeScript     | JavaScript     |
-| -------------- | -------------- |
-| No release yet | No release yet |
+| TypeScript  | JavaScript  |
+| ----------- | ----------- |
+| 0.0.1-alpha | 0.0.1-alpha |
 
 ### Back-end
 

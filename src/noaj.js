@@ -1,4 +1,5 @@
 var N = {
+    VERSION: '0.0.1-alpha',
     url: '',
     debug: false,
     connections: [],
