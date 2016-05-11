@@ -100,10 +100,10 @@ var Noaj;
     }());
     Noaj.Request = Request;
 })(Noaj || (Noaj = {}));
-var TZW = (function () {
-    function TZW() {
+var LZW = (function () {
+    function LZW() {
     }
-    TZW.encode = function (str) {
+    LZW.encode = function (str) {
         var dict = {};
         var data = (str + "").split("");
         var out = [];
@@ -111,52 +111,53 @@ var TZW = (function () {
         var res = [];
         var currChar;
         var phrase = data[0];
-        var code = 65536;
+        var code = LZW.dictSize;
         for (var i = 1; i < data.length; i++) {
             currChar = data[i];
-            if (dict[phrase + currChar] != null) {
+            if (dict['_' + phrase + currChar] != null) {
                 phrase += currChar;
             }
             else {
-                out.push(phrase.length > 1 ? dict[phrase] : phrase.charCodeAt(0));
-                dict[phrase + currChar] = code;
+                out.push(phrase.length > 1 ? dict['_' + phrase] : phrase.charCodeAt(0));
+                dict['_' + phrase + currChar] = code;
                 code++;
                 phrase = currChar;
             }
         }
-        out.push(phrase.length > 1 ? dict[phrase] : phrase.charCodeAt(0));
+        out.push(phrase.length > 1 ? dict['_' + phrase] : phrase.charCodeAt(0));
         buffer = new ArrayBuffer(out.length);
         for (var i = 0; i < out.length; i++) {
             buffer[i] = out[i];
         }
         return buffer;
     };
-    TZW.decode = function (str) {
+    LZW.decode = function (str) {
         var dict = {};
         var data = str;
         var currChar = String.fromCharCode(data[0]);
         var oldPhrase = currChar;
         var out = [currChar];
         var res = "";
-        var code = 65536;
+        var code = LZW.dictSize;
         var phrase;
         for (var i = 1; i < data.byteLength; i++) {
             var currCode = data[i];
-            if (currCode < 65536) {
+            if (currCode < LZW.dictSize) {
                 phrase = String.fromCharCode(data[i]);
             }
             else {
-                phrase = dict[currCode] ? dict[currCode] : (oldPhrase + currChar);
+                phrase = dict['_' + currCode] ? dict['_' + currCode] : (oldPhrase + currChar);
             }
             out.push(phrase);
             currChar = phrase.charAt(0);
-            dict[code] = oldPhrase + currChar;
+            dict['_' + code] = oldPhrase + currChar;
             code++;
             oldPhrase = phrase;
         }
         return out.join("");
     };
-    return TZW;
+    LZW.dictSize = 57344;
+    return LZW;
 }());
 N.gc();
 /*

@@ -118,7 +118,9 @@ module Noaj {
     }
 }
 
-class TZW {
+class LZW {
+    static dictSize:number = 57344;
+    
     static encode(str: string):ArrayBuffer {
         var dict:Object = {};
         var data:Array<string> = (str + "").split("");
@@ -127,19 +129,19 @@ class TZW {
         var res:Array<string> = [];
         var currChar:string;
         var phrase:string = data[0];
-        var code:number = 65536;
+        var code:number = LZW.dictSize;
         for (var i = 1; i < data.length; i++) {
             currChar = data[i];
-            if (dict[phrase + currChar] != null) {
+            if (dict['_' + phrase + currChar] != null) {
                 phrase += currChar;
             } else {
-                out.push(phrase.length > 1 ? dict[phrase] : phrase.charCodeAt(0));
-                dict[phrase + currChar] = code;
+                out.push(phrase.length > 1 ? dict['_' + phrase] : phrase.charCodeAt(0));
+                dict['_' + phrase + currChar] = code;
                 code++;
                 phrase = currChar;
             }
         }
-        out.push(phrase.length > 1 ? dict[phrase] : phrase.charCodeAt(0));
+        out.push(phrase.length > 1 ? dict['_' + phrase] : phrase.charCodeAt(0));
         buffer = new ArrayBuffer(out.length);
         for (var i = 0; i < out.length; i++){
             buffer[i] = out[i];
@@ -153,19 +155,19 @@ class TZW {
         var oldPhrase:string = currChar;
         var out:Array<string> = [currChar];
         var res:string = "";
-        var code:number = 65536;
+        var code:number = LZW.dictSize;
         var phrase:string;
         for (var i = 1; i < data.byteLength; i++) {
             var currCode:number = data[i];
-            if (currCode < 65536) {
+            if (currCode < LZW.dictSize) {
                 phrase = String.fromCharCode(data[i]);
             }
             else {
-                phrase = dict[currCode] ? dict[currCode] : (oldPhrase + currChar);
+                phrase = dict['_' + currCode] ? dict['_' + currCode] : (oldPhrase + currChar);
             }
             out.push(phrase);
             currChar = phrase.charAt(0);
-            dict[code] = oldPhrase + currChar;
+            dict['_' + code] = oldPhrase + currChar;
             code++;
             oldPhrase = phrase;
         }
