@@ -99,6 +99,7 @@ var Noaj;
     }());
     Noaj.Request = Request;
 })(Noaj || (Noaj = {}));
+N.gc();
 /*
 N.request({
     route: 'test'
@@ -106,7 +107,8 @@ N.request({
 
 N.request({
     route: 'hello',
+    data: {foo: 'bar'}
     success: function(data: string){
-    console.log(data);
+        console.log(data);
 }}).send();
 */ 
