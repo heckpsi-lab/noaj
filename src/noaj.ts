@@ -12,7 +12,7 @@ interface IN {
 }
 
 var N: IN = {
-    VERSION: '0.0.2-alpha',
+    VERSION: '0.0.3-alpha',
     url: '',
     debug: false,
     compression: false,
