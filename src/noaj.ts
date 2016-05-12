@@ -197,4 +197,4 @@ class Compression {
         console.log("[Noaj][Compression] Info: Compression Rate " + ((Compression.encode(str).byteLength/str.length) * 100) + " %") ;
     }
 }
-N.gc();
+N.autoGc();

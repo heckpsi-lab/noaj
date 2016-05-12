@@ -180,4 +180,4 @@ var Compression = (function () {
     Compression.dictSize = 57344;
     return Compression;
 }());
-N.gc();
+N.autoGc();
