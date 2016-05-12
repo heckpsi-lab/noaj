@@ -60,4 +60,5 @@ N.request({
 | Garbage Collection    |   ✅   |  ✅   |    ❌    |      |
 | GC Tuning             |   ✅   |  ✅   |    ❌    |      |
 | Secured Communication |   ✅   |  ✅   |    ❌    |      |
+| Server Side AJAX      |   ❌   |  ❌   |    ❌    |      |
 
