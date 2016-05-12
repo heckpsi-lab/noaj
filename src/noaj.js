@@ -74,12 +74,12 @@ var Noaj;
                 }
                 this.connection.finished = false;
                 if (N.compression) {
-                    this.connection.socket.send(LZW.encode(JSON.stringify({
+                    this.connection.socket.send(Compression.encode(JSON.stringify({
                         route: this.route,
                         data: this.data
                     })));
                     this.connection.socket.onmessage = function (ev) {
-                        this.success(LZW.decode(ev.data));
+                        this.success(Compression.decode(ev.data));
                         this.connection.finished = true;
                     }.bind(this);
                 }
@@ -118,10 +118,10 @@ var Noaj;
     }());
     Noaj.Request = Request;
 })(Noaj || (Noaj = {}));
-var LZW = (function () {
-    function LZW() {
+var Compression = (function () {
+    function Compression() {
     }
-    LZW.encode = function (str) {
+    Compression.encode = function (str) {
         var dict = {};
         var data = (str + "").split("");
         var out = [];
@@ -129,7 +129,7 @@ var LZW = (function () {
         var res = [];
         var currChar;
         var phrase = data[0];
-        var code = LZW.dictSize;
+        var code = Compression.dictSize;
         for (var i = 1; i < data.length; i++) {
             currChar = data[i];
             if (dict['_' + phrase + currChar] != null) {
@@ -149,18 +149,18 @@ var LZW = (function () {
         }
         return buffer;
     };
-    LZW.decode = function (str) {
+    Compression.decode = function (str) {
         var dict = {};
         var data = str;
         var currChar = String.fromCharCode(data[0]);
         var oldPhrase = currChar;
         var out = [currChar];
         var res = "";
-        var code = LZW.dictSize;
+        var code = Compression.dictSize;
         var phrase;
         for (var i = 1; i < data.byteLength; i++) {
             var currCode = data[i];
-            if (currCode < LZW.dictSize) {
+            if (currCode < Compression.dictSize) {
                 phrase = String.fromCharCode(data[i]);
             }
             else {
@@ -174,7 +174,10 @@ var LZW = (function () {
         }
         return out.join("");
     };
-    LZW.dictSize = 57344;
-    return LZW;
+    Compression.benchmark = function (str) {
+        console.log("[Noaj][Compression] Info: Compression Rate " + ((Compression.encode(str).byteLength / str.length) * 100) + " %");
+    };
+    Compression.dictSize = 57344;
+    return Compression;
 }());
 N.gc();

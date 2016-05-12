@@ -97,12 +97,12 @@ module Noaj {
                 }
                 this.connection.finished = false;
                 if (N.compression) {
-                    this.connection.socket.send(LZW.encode(JSON.stringify({
+                    this.connection.socket.send(Compression.encode(JSON.stringify({
                         route: this.route,
                         data: this.data
                     })));
                     this.connection.socket.onmessage = function (ev: MessageEvent) {
-                        this.success(LZW.decode(ev.data));
+                        this.success(Compression.decode(ev.data));
                         this.connection.finished = true;
                     }.bind(this);
                 } else {
@@ -138,7 +138,7 @@ module Noaj {
     }
 }
 
-class LZW {
+class Compression {
     static dictSize: number = 57344;
 
     static encode(str: string): ArrayBuffer {
@@ -149,7 +149,7 @@ class LZW {
         var res: Array<string> = [];
         var currChar: string;
         var phrase: string = data[0];
-        var code: number = LZW.dictSize;
+        var code: number = Compression.dictSize;
         for (var i = 1; i < data.length; i++) {
             currChar = data[i];
             if (dict['_' + phrase + currChar] != null) {
@@ -175,11 +175,11 @@ class LZW {
         var oldPhrase: string = currChar;
         var out: Array<string> = [currChar];
         var res: string = "";
-        var code: number = LZW.dictSize;
+        var code: number = Compression.dictSize;
         var phrase: string;
         for (var i = 1; i < data.byteLength; i++) {
             var currCode: number = data[i];
-            if (currCode < LZW.dictSize) {
+            if (currCode < Compression.dictSize) {
                 phrase = String.fromCharCode(data[i]);
             }
             else {
@@ -192,6 +192,9 @@ class LZW {
             oldPhrase = phrase;
         }
         return out.join("");
+    }
+    static benchmark(str: string): void {
+        console.log("[Noaj][Compression] Info: Compression Rate " + ((Compression.encode(str).byteLength/str.length) * 100) + " %") ;
     }
 }
 N.gc();

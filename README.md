@@ -28,15 +28,14 @@ NOAJ (Not Only Asynchronous JavaScript, formerly called [yukkikaze.js](https://g
 
 - **Virtual Request**, no real connections or requests managed by developers. The library would find the most optimized way to communicate with server.
 - **AJAX-like API**, zero learning cost as long as you have ever dealed with AJAX development.
-- **Compressed WebSocket**, optional internal LZW compression engine, written in pure TypeScript/JavaScript code, providing fast compression on most browsers.
+- **Compressed WebSocket**, internal compression engine, written in pure TypeScript/JavaScript code, providing fast compression on most browsers.
 - **AJAX-Fallback**, fall back to typical AJAX if the browser still does not support WebSocket.
 
 ## Getting Started
 
 ```javascript
 N.url = 'foo.bar/noaj';
-N.secured = false;
-N.compression = true;
+N.secured = false; // turn to 'true' if using https and wss
 
 N.request({
     route: '/hello'
@@ -57,7 +56,7 @@ N.request({
 | AJAX-like API         | √ (since 0.0.1) |  ×   |    ×    |      |
 | WebSocket             | √ (since 0.0.1) |  ×   |    ×    |      |
 | AJAX Fallback         | √ (since 0.0.1) |  ×   |    ×    |      |
-| LZW Compression       | √ (since 0.0.2) |  ×   |    ×    |      |
+| Compression           | √ (since 0.0.2) |  ×   |    ×    |      |
 | Garbage Collection    | √ (since 0.0.1) |  ×   |    ×    |      |
 | GC Tuning             |        ×        |  ×   |    ×    |      |
 | Secured Communication |        ×        |  ×   |    ×    |      |
