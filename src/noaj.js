@@ -1,5 +1,5 @@
 var N = {
-    VERSION: '0.0.3-alpha',
+    VERSION: '0.0.4-alpha',
     url: '',
     debug: false,
     compression: false,
@@ -93,11 +93,13 @@ var Noaj;
                         this.connection.finished = true;
                     }.bind(this);
                 }
+                return true;
             }
             catch (error) {
                 if (N.debug)
                     console.log("[Noaj][WebSocket] Error: Unable to proceed with WebSocket, falling back to AJAX. " + error);
                 this.fallbackSend();
+                return false;
             }
         };
         Request.prototype.fallbackSend = function () {
@@ -126,7 +128,6 @@ var Compression = (function () {
         var data = (str + "").split("");
         var out = [];
         var buffer;
-        var res = [];
         var currChar;
         var phrase = data[0];
         var code = Compression.dictSize;
@@ -155,7 +156,6 @@ var Compression = (function () {
         var currChar = String.fromCharCode(data[0]);
         var oldPhrase = currChar;
         var out = [currChar];
-        var res = "";
         var code = Compression.dictSize;
         var phrase;
         for (var i = 1; i < data.byteLength; i++) {
@@ -176,8 +176,9 @@ var Compression = (function () {
     };
     Compression.benchmark = function (str) {
         console.log("[Noaj][Compression] Info: Compression Rate " + ((Compression.encode(str).byteLength / str.length) * 100) + " %");
+        return Compression.encode(str).byteLength / str.length;
     };
-    Compression.dictSize = 57344;
+    Compression.dictSize = 65535;
     return Compression;
 }());
 N.autoGc();

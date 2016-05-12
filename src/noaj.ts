@@ -12,7 +12,7 @@ interface IN {
 }
 
 var N: IN = {
-    VERSION: '0.0.3-alpha',
+    VERSION: '0.0.4-alpha',
     url: '',
     debug: false,
     compression: false,
@@ -45,7 +45,7 @@ var N: IN = {
         N.gc();
         setTimeout(() => N.autoGc(), N.autoGcInterval);
     }
-}
+};
 
 module Noaj {
     export class Connection {
@@ -81,7 +81,7 @@ module Noaj {
             this.connection = null;
         }
 
-        send() {
+        send():boolean {
             try {
                 for (var key in N.connections) {
                     var element = N.connections[key];
@@ -115,9 +115,11 @@ module Noaj {
                         this.connection.finished = true;
                     }.bind(this);
                 }
+                return true;
             } catch (error) {
                 if (N.debug) console.log("[Noaj][WebSocket] Error: Unable to proceed with WebSocket, falling back to AJAX. " + error)
                 this.fallbackSend();
+                return false;
             }
         }
 
@@ -139,14 +141,13 @@ module Noaj {
 }
 
 class Compression {
-    static dictSize: number = 57344;
+    static dictSize: number = 65535;
 
     static encode(str: string): ArrayBuffer {
         var dict: Object = {};
         var data: Array<string> = (str + "").split("");
         var out: Array<number> = [];
         var buffer: ArrayBuffer;
-        var res: Array<string> = [];
         var currChar: string;
         var phrase: string = data[0];
         var code: number = Compression.dictSize;
@@ -174,7 +175,6 @@ class Compression {
         var currChar: string = String.fromCharCode(data[0]);
         var oldPhrase: string = currChar;
         var out: Array<string> = [currChar];
-        var res: string = "";
         var code: number = Compression.dictSize;
         var phrase: string;
         for (var i = 1; i < data.byteLength; i++) {
@@ -193,8 +193,9 @@ class Compression {
         }
         return out.join("");
     }
-    static benchmark(str: string): void {
+    static benchmark(str: string): number {
         console.log("[Noaj][Compression] Info: Compression Rate " + ((Compression.encode(str).byteLength/str.length) * 100) + " %") ;
+        return Compression.encode(str).byteLength/str.length;
     }
 }
 N.autoGc();

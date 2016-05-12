@@ -21,8 +21,8 @@ NOAJ (Not Only Asynchronous JavaScript, formerly called [yukkikaze.js](https://g
 |       ❌        |      ❌       |    ❌    |   ❌   |
 
 * **Alpha** versions always provide the latest features
-* **Beta** versions are developing versions with 100% code coverage.
-* **Release** versions provide stable APIs that would be seldomly changed or removed.
+* **Beta** versions are developing versions with 70%+ code coverage.
+* **Release** versions provide stable APIs that would be seldomly changed or removed with 100% code coverage.
 
 ## Features
 
