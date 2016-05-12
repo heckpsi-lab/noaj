@@ -1,5 +1,5 @@
 var N = {
-    VERSION: '0.0.4-alpha',
+    VERSION: '0.0.5-beta',
     url: '',
     debug: false,
     compression: false,
