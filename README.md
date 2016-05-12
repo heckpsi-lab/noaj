@@ -7,18 +7,18 @@ NOAJ (Not Only Asynchronous JavaScript, formerly called [yukkikaze.js](https://g
 
 ### Front-end
 
-|                | Alpha       | Beta | Release |
-| -------------- | ----------- | ---- | ------- |
-| TypeScript     | 0.0.3-alpha | ×    | ×       |
-| JavaScript     | 0.0.3-alpha | ×    | ×       |
-| Android (Java) | ×           | ×    | ×       |
-| iOS (Swift)    | ×           | ×    | ×       |
+|                |    Alpha    | Beta | Release |
+| -------------- | :---------: | :--: | :-----: |
+| TypeScript     | 0.0.3-alpha |  ❌   |    ❌    |
+| JavaScript     | 0.0.3-alpha |  ❌   |    ❌    |
+| Android (Java) |      ❌      |  ❌   |    ❌    |
+| iOS (Swift)    |      ❌      |  ❌   |    ❌    |
 
 ### Back-end
 
 | Ruby (Sinatra) | Ruby (Rails) | Node.js | C++11 |
-| -------------- | ------------ | ------- | ----- |
-| ×              | ×            | ×       | ×     |
+| :------------: | :----------: | :-----: | :---: |
+|       ❌        |      ❌       |    ❌    |   ❌   |
 
 * **Alpha** versions always provide the latest features
 * **Beta** versions are developing versions with 100% code coverage.
@@ -51,13 +51,13 @@ N.request({
 
 ## Developing Status
 
-| Feature               |      Alpha      | Beta | Release | Note |
-| --------------------- | :-------------: | :--: | :-----: | ---: |
-| AJAX-like API         | √ (since 0.0.1) |  ×   |    ×    |      |
-| WebSocket             | √ (since 0.0.1) |  ×   |    ×    |      |
-| AJAX Fallback         | √ (since 0.0.1) |  ×   |    ×    |      |
-| Compression           | √ (since 0.0.2) |  ×   |    ×    |      |
-| Garbage Collection    | √ (since 0.0.1) |  ×   |    ×    |      |
-| GC Tuning             | √ (since 0.0.3) |  ×   |    ×    |      |
-| Secured Communication | √ (since 0.0.3) |  ×   |    ×    |      |
+| Feature               | Alpha | Beta | Release | Note |
+| --------------------- | :---: | :--: | :-----: | :--: |
+| AJAX-like API         |   ✅   |  ❌   |    ❌    |      |
+| WebSocket             |   ✅   |  ❌   |    ❌    |      |
+| AJAX Fallback         |   ✅   |  ❌   |    ❌    |      |
+| Compression           |   ✅   |  ❌   |    ❌    |      |
+| Garbage Collection    |   ✅   |  ❌   |    ❌    |      |
+| GC Tuning             |   ✅   |  ❌   |    ❌    |      |
+| Secured Communication |   ✅   |  ❌   |    ❌    |      |
 
