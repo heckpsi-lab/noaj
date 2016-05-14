@@ -1,5 +1,7 @@
 # NOAJ
 
+![](res/logo.png)
+
 ## What is NOAJ
 NOAJ (Not Only Asynchronous JavaScript, formerly called [yukkikaze.js](https://github.com/dsh0416/yukkikaze.js)) is a communication framework which provides AJAX-like API based on WebSocket. It could dynamically manage the socket pool to reduce the redundant package headers. It could also fallback to AJAX if the browser does not support WebSocket feature.
 
@@ -60,5 +62,5 @@ N.request({
 | Garbage Collection    |   ✅   |  ✅   |    ❌    |      |
 | GC Tuning             |   ✅   |  ✅   |    ❌    |      |
 | Secured Communication |   ✅   |  ✅   |    ❌    |      |
-| Server Side AJAX      |   ❌   |  ❌   |    ❌    |      |
+| Async Event Push      |   ❌   |  ❌   |    ❌    |      |
 
