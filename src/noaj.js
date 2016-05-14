@@ -62,7 +62,7 @@ var Noaj;
             try {
                 for (var key in N.connections) {
                     var element = N.connections[key];
-                    if (!element.finished) {
+                    if (element.finished) {
                         this.connection = element;
                         this.connection.old = false;
                         break;
@@ -82,6 +82,16 @@ var Noaj;
                         this.success(Compression.decode(ev.data));
                         this.connection.finished = true;
                     }.bind(this);
+                    this.connection.socket.onclose = function () {
+                        this.connection.finished = true;
+                        if (N.debug)
+                            console.log("[Noaj][WebSocket] Error: WebSocket closed unexpectedly.");
+                    }.bind(this);
+                    this.connection.socket.onerror = function () {
+                        this.connection.finished = true;
+                        if (N.debug)
+                            console.log("[Noaj][WebSocket] Error: WebSocket has met an unexpected problem.");
+                    };
                 }
                 else {
                     this.connection.socket.send(JSON.stringify({
@@ -103,18 +113,28 @@ var Noaj;
             }
         };
         Request.prototype.fallbackSend = function () {
-            var ajaxRequest = new XMLHttpRequest();
-            ajaxRequest.open('POST', (N.secured ? 'https://' : 'http://') + N.url, true);
-            ajaxRequest.send(JSON.stringify({
-                route: this.route,
-                data: this.data
-            }));
-            ajaxRequest.onreadystatechange = function () {
-                if (ajaxRequest.readyState == 4 &&
-                    ajaxRequest.status == 200) {
-                    this.success(ajaxRequest.responseText);
-                }
-            }.bind(this);
+            try {
+                var ajaxRequest = new XMLHttpRequest();
+                ajaxRequest.open('POST', (N.secured ? 'https://' : 'http://') + N.url, true);
+                ajaxRequest.send(JSON.stringify({
+                    route: this.route,
+                    data: this.data
+                }));
+                ajaxRequest.onreadystatechange = function () {
+                    if (ajaxRequest.readyState == 4 &&
+                        ajaxRequest.status == 200) {
+                        this.success(ajaxRequest.responseText);
+                    }
+                    else if (ajaxRequest.readyState == 4) {
+                        if (N.debug)
+                            console.log("[Noaj][AJAX] Error: AJAX has returned with an unsuccessful result.");
+                    }
+                }.bind(this);
+            }
+            catch (err) {
+                if (N.debug)
+                    console.log("[Noaj][AJAX] Error: AJAX has met a problem.");
+            }
         };
         return Request;
     }());

@@ -41,7 +41,7 @@ var N: IN = {
         if (N.debug) console.log("[Noaj][GC] Info: Collected: " + collectCount + ", Total: " + totalCount)
     },
     autoGcInterval: 5000,
-    autoGc: function() {
+    autoGc: function () {
         N.gc();
         setTimeout(() => N.autoGc(), N.autoGcInterval);
     }
@@ -53,7 +53,7 @@ module Noaj {
         finished: boolean;
         old: boolean;
         constructor(url: string) {
-            this.socket = new WebSocket((N.secured? 'wss://' : 'ws://') + url);
+            this.socket = new WebSocket((N.secured ? 'wss://' : 'ws://') + url);
             this.finished = true;
             this.old = false;
         }
@@ -81,11 +81,11 @@ module Noaj {
             this.connection = null;
         }
 
-        send():boolean {
+        send(): boolean {
             try {
                 for (var key in N.connections) {
                     var element = N.connections[key];
-                    if (!element.finished) {
+                    if (element.finished) {
                         this.connection = element;
                         this.connection.old = false;
                         break;
@@ -105,6 +105,14 @@ module Noaj {
                         this.success(Compression.decode(ev.data));
                         this.connection.finished = true;
                     }.bind(this);
+                    this.connection.socket.onclose = function () {
+                        this.connection.finished = true;
+                        if (N.debug) console.log("[Noaj][WebSocket] Error: WebSocket closed unexpectedly.");
+                    }.bind(this);
+                    this.connection.socket.onerror = function () {
+                        this.connection.finished = true;
+                        if (N.debug) console.log("[Noaj][WebSocket] Error: WebSocket has met an unexpected problem.");
+                    }
                 } else {
                     this.connection.socket.send(JSON.stringify({
                         route: this.route,
@@ -124,18 +132,24 @@ module Noaj {
         }
 
         fallbackSend() {
-            var ajaxRequest = new XMLHttpRequest();
-            ajaxRequest.open('POST', (N.secured ? 'https://' : 'http://') + N.url, true);
-            ajaxRequest.send(JSON.stringify({
-                route: this.route,
-                data: this.data
-            }));
-            ajaxRequest.onreadystatechange = function () {
-                if (ajaxRequest.readyState == 4 &&
-                    ajaxRequest.status == 200) {
-                    this.success(ajaxRequest.responseText);
-                }
-            }.bind(this);
+            try {
+                var ajaxRequest = new XMLHttpRequest();
+                ajaxRequest.open('POST', (N.secured ? 'https://' : 'http://') + N.url, true);
+                ajaxRequest.send(JSON.stringify({
+                    route: this.route,
+                    data: this.data
+                }));
+                ajaxRequest.onreadystatechange = function () {
+                    if (ajaxRequest.readyState == 4 &&
+                        ajaxRequest.status == 200) {
+                        this.success(ajaxRequest.responseText);
+                    } else if (ajaxRequest.readyState == 4) {
+                        if (N.debug) console.log("[Noaj][AJAX] Error: AJAX has returned with an unsuccessful result.")
+                    }
+                }.bind(this);
+            } catch (err) {
+                if (N.debug) console.log("[Noaj][AJAX] Error: AJAX has met a problem.")
+            }
         }
     }
 }
@@ -194,8 +208,8 @@ class Compression {
         return out.join("");
     }
     static benchmark(str: string): number {
-        console.log("[Noaj][Compression] Info: Compression Rate " + ((Compression.encode(str).byteLength/str.length) * 100) + " %") ;
-        return Compression.encode(str).byteLength/str.length;
+        console.log("[Noaj][Compression] Info: Compression Rate " + ((Compression.encode(str).byteLength / str.length) * 100) + " %");
+        return Compression.encode(str).byteLength / str.length;
     }
 }
 N.autoGc();
