@@ -103,22 +103,20 @@ module Noaj {
                 }
                 this.connection.finished = false;
                 if (N.compression) {
-                    this.connection.socket.send(Compression.encode(JSON.stringify({
-                        route: this.route,
-                        data: this.data
-                    })));
+                    var compressed: ArrayBuffer = new ArrayBuffer(0);
+                    try {
+                        compressed = Compression.encode(JSON.stringify({
+                            route: this.route,
+                            data: this.data
+                        }));
+                    } catch (err) { }
+                }
+                if (N.compression && compressed.byteLength != 0) {
+                    this.connection.socket.send(compressed);
                     this.connection.socket.onmessage = function (ev: MessageEvent) {
                         this.success(Compression.decode(ev.data));
                         this.connection.finished = true;
                     }.bind(this);
-                    this.connection.socket.onclose = function () {
-                        this.connection.finished = true;
-                        if (N.debug) console.log("[Noaj][WebSocket] Error: WebSocket closed unexpectedly.");
-                    }.bind(this);
-                    this.connection.socket.onerror = function () {
-                        this.connection.finished = true;
-                        if (N.debug) console.log("[Noaj][WebSocket] Error: WebSocket has met an unexpected problem.");
-                    }
                 } else {
                     this.connection.socket.send(JSON.stringify({
                         route: this.route,
@@ -128,6 +126,14 @@ module Noaj {
                         this.success(ev.data);
                         this.connection.finished = true;
                     }.bind(this);
+                }
+                this.connection.socket.onclose = function () {
+                    this.connection.finished = true;
+                    if (N.debug) console.log("[Noaj][WebSocket] Error: WebSocket closed unexpectedly.");
+                }.bind(this);
+                this.connection.socket.onerror = function () {
+                    this.connection.finished = true;
+                    if (N.debug) console.log("[Noaj][WebSocket] Error: WebSocket has met an unexpected problem.");
                 }
                 return true;
             } catch (error) {
@@ -173,6 +179,7 @@ class Compression {
         var code: number = Compression.dictSize;
         for (var i = 1; i < data.length; i++) {
             currChar = data[i];
+            if (currChar.charCodeAt(0) > Compression.dictSize) throw "Compression Source Out of Range";
             if (dict['_' + phrase + currChar] != null) {
                 phrase += currChar;
             } else {

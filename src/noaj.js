@@ -79,24 +79,21 @@ var Noaj;
                 }
                 this.connection.finished = false;
                 if (N.compression) {
-                    this.connection.socket.send(Compression.encode(JSON.stringify({
-                        route: this.route,
-                        data: this.data
-                    })));
+                    var compressed = new ArrayBuffer(0);
+                    try {
+                        compressed = Compression.encode(JSON.stringify({
+                            route: this.route,
+                            data: this.data
+                        }));
+                    }
+                    catch (err) { }
+                }
+                if (N.compression && compressed.byteLength != 0) {
+                    this.connection.socket.send(compressed);
                     this.connection.socket.onmessage = function (ev) {
                         this.success(Compression.decode(ev.data));
                         this.connection.finished = true;
                     }.bind(this);
-                    this.connection.socket.onclose = function () {
-                        this.connection.finished = true;
-                        if (N.debug)
-                            console.log("[Noaj][WebSocket] Error: WebSocket closed unexpectedly.");
-                    }.bind(this);
-                    this.connection.socket.onerror = function () {
-                        this.connection.finished = true;
-                        if (N.debug)
-                            console.log("[Noaj][WebSocket] Error: WebSocket has met an unexpected problem.");
-                    };
                 }
                 else {
                     this.connection.socket.send(JSON.stringify({
@@ -108,6 +105,16 @@ var Noaj;
                         this.connection.finished = true;
                     }.bind(this);
                 }
+                this.connection.socket.onclose = function () {
+                    this.connection.finished = true;
+                    if (N.debug)
+                        console.log("[Noaj][WebSocket] Error: WebSocket closed unexpectedly.");
+                }.bind(this);
+                this.connection.socket.onerror = function () {
+                    this.connection.finished = true;
+                    if (N.debug)
+                        console.log("[Noaj][WebSocket] Error: WebSocket has met an unexpected problem.");
+                };
                 return true;
             }
             catch (error) {
@@ -158,6 +165,8 @@ var Compression = (function () {
         var code = Compression.dictSize;
         for (var i = 1; i < data.length; i++) {
             currChar = data[i];
+            if (currChar.charCodeAt(0) > Compression.dictSize)
+                throw "Compression Source Out of Range";
             if (dict['_' + phrase + currChar] != null) {
                 phrase += currChar;
             }
