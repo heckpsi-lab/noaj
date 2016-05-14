@@ -3,6 +3,7 @@ var N = {
     url: '',
     debug: false,
     compression: false,
+    maxIdle: 1,
     secured: false,
     connections: [],
     request: function (param) {
@@ -13,14 +14,18 @@ var N = {
             var collectCount = 0;
             var totalCount = 0;
         }
+        var idle = 0;
         for (var i = 0; i < N.connections.length; i++) {
             var element = N.connections[i];
             if (element.old) {
                 element.socket.close();
-                N.connections.splice(i, 1);
-                if (N.debug)
-                    collectCount++;
-                i--;
+                idle++;
+                if (idle > N.maxIdle) {
+                    N.connections.splice(i, 1);
+                    if (N.debug)
+                        collectCount++;
+                    i--;
+                }
             }
             else if (element.finished) {
                 element.old = true;

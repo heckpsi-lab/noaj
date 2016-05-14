@@ -4,6 +4,7 @@ interface IN {
     debug: boolean;
     compression: boolean;
     secured: boolean;
+    maxIdle: number;
     connections: Array<Noaj.Connection>;
     gc(): void;
     autoGc(): void;
@@ -16,6 +17,7 @@ var N: IN = {
     url: '',
     debug: false,
     compression: false,
+    maxIdle: 1,
     secured: false,
     connections: [],
     request: function (param: Noaj.IRequest) {
@@ -26,13 +28,17 @@ var N: IN = {
             var collectCount = 0;
             var totalCount = 0;
         }
+        var idle: number = 0;
         for (var i = 0; i < N.connections.length; i++) {
             var element = N.connections[i];
             if (element.old) {
                 element.socket.close();
-                N.connections.splice(i, 1);
-                if (N.debug) collectCount++;
-                i--;
+                idle++;
+                if (idle > N.maxIdle) {
+                    N.connections.splice(i, 1);
+                    if (N.debug) collectCount++;
+                    i--;
+                }
             } else if (element.finished) {
                 element.old = true;
             }
