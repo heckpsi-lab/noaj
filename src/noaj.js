@@ -91,7 +91,12 @@ var Noaj;
                 if (N.compression && compressed.byteLength != 0) {
                     this.connection.socket.send(compressed);
                     this.connection.socket.onmessage = function (ev) {
-                        this.success(Compression.decode(ev.data));
+                        if (typeof ev.data === "string") {
+                            this.success(ev.data);
+                        }
+                        else {
+                            this.success(Compression.decode(ev.data));
+                        }
                         this.connection.finished = true;
                     }.bind(this);
                 }
@@ -101,7 +106,12 @@ var Noaj;
                         data: this.data
                     }));
                     this.connection.socket.onmessage = function (ev) {
-                        this.success(ev.data);
+                        if (typeof ev.data === "string") {
+                            this.success(ev.data);
+                        }
+                        else {
+                            this.success(Compression.decode(ev.data));
+                        }
                         this.connection.finished = true;
                     }.bind(this);
                 }
