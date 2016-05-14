@@ -11,8 +11,8 @@ NOAJ (Not Only Asynchronous JavaScript, formerly called [yukkikaze.js](https://g
 
 |                |    Alpha    |    Beta    | Release |
 | -------------- | :---------: | :--------: | :-----: |
-| TypeScript     | 0.0.4-alpha | 0.0.5-beta |    ❌    |
-| JavaScript     | 0.0.4-alpha | 0.0.5-beta |    ❌    |
+| TypeScript     | 0.0.6-alpha | 0.0.5-beta |    ❌    |
+| JavaScript     | 0.0.6-alpha | 0.0.5-beta |    ❌    |
 | Android (Java) |      ❌      |     ❌      |    ❌    |
 | iOS (Swift)    |      ❌      |     ❌      |    ❌    |
 
@@ -53,14 +53,16 @@ N.request({
 
 ## Developing Status
 
-| Feature               | Alpha | Beta | Release | Note |
-| --------------------- | :---: | :--: | :-----: | :--: |
-| AJAX-like API         |   ✅   |  ✅   |    ❌    |      |
-| WebSocket             |   ✅   |  ✅   |    ❌    |      |
-| AJAX Fallback         |   ✅   |  ✅   |    ❌    |      |
-| Compression           |   ✅   |  ✅   |    ❌    |      |
-| Garbage Collection    |   ✅   |  ✅   |    ❌    |      |
-| GC Tuning             |   ✅   |  ✅   |    ❌    |      |
-| Secured Communication |   ✅   |  ✅   |    ❌    |      |
-| Async Event Push      |   ❌   |  ❌   |    ❌    |      |
+| Feature                 | Alpha | Beta | Release |     Note     |
+| ----------------------- | :---: | :--: | :-----: | :----------: |
+| AJAX-like API           |   ✅   |  ✅   |    ❌    |              |
+| WebSocket               |   ✅   |  ✅   |    ❌    |              |
+| AJAX Fallback           |   ✅   |  ✅   |    ❌    |              |
+| Compression             |  ❗️   |  ❗️  |    ❌    | To be tested |
+| Garbage Collection      |   ✅   |  ✅   |    ❌    |              |
+| GC Tuning               |   ✅   |  ✅   |    ❌    |              |
+| Secured Communication   |   ✅   |  ✅   |    ❌    |              |
+| Async Event Push        |   ❌   |  ❌   |    ❌    |              |
+| Compression Fallback    |   ✅   |  ❌   |    ❌    |              |
+| Optional Reserved Idles |   ✅   |  ❌   |    ❌    |              |
 
