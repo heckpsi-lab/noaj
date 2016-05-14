@@ -213,9 +213,22 @@ class Compression {
         }
         return out.join("");
     }
+
+    static getUtfSize(str: string): number {
+        var sizeInBytes = str.split('')
+            .map(function (ch) {
+                return ch.charCodeAt(0);
+            }).map(function (uchar) {
+                return uchar < 128 ? 1 : 2;
+            }).reduce(function (curr, next) {
+                return curr + next;
+            });
+        return sizeInBytes;
+    }
+
     static benchmark(str: string): number {
-        console.log("[Noaj][Compression] Info: Compression Rate " + ((Compression.encode(str).byteLength / str.length) * 100) + " %");
-        return Compression.encode(str).byteLength / str.length;
+        console.log("[Noaj][Compression] Info: Compression Rate " + ((Compression.encode(str).byteLength / Compression.getUtfSize(str)) * 100) + " %");
+        return Compression.encode(str).byteLength / Compression.getUtfSize(str);
     }
 }
 N.autoGc();
