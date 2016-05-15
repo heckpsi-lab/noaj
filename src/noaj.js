@@ -44,6 +44,17 @@ var N = {
     autoGc: function () {
         N.gc();
         setTimeout(function () { return N.autoGc(); }, N.autoGcInterval);
+    },
+    compressionDetect: function () {
+        try {
+            if (Compression.decode(Compression.encode('hello-world. 你好世界。')) != 'hello-world. 你好世界。')
+                throw "Compression Error";
+        }
+        catch (err) {
+            if (N.debug)
+                console.log("[Noaj][Compression] Warn: Unable to initialize compression.");
+            N.compression = false;
+        }
     }
 };
 var Noaj;
@@ -263,12 +274,4 @@ var Compression = (function () {
     return Compression;
 }());
 N.autoGc();
-try {
-    if (Compression.decode(Compression.encode('hello-world. 你好世界。')) != 'hello-world. 你好世界。')
-        throw "Compression Error";
-}
-catch (err) {
-    if (N.debug)
-        console.log("[Noaj][Compression] Warn: Unable to initialize compression.");
-    N.compression = false;
-}
+N.compressionDetect();

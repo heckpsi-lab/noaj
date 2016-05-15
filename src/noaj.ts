@@ -11,6 +11,7 @@ interface IN {
     connections: Array<Noaj.Connection>;
     gc(): void;
     autoGc(): void;
+    compressionDetect(): void;
     autoGcInterval: number;
     request(param: Noaj.IRequest): Noaj.Request;
 }
@@ -57,6 +58,14 @@ var N: IN = {
     autoGc: function () {
         N.gc();
         setTimeout(() => N.autoGc(), N.autoGcInterval);
+    },
+    compressionDetect: function () {
+        try {
+            if (Compression.decode(Compression.encode('hello-world. 你好世界。')) != 'hello-world. 你好世界。') throw "Compression Error";
+        } catch (err) {
+            if (N.debug) console.log("[Noaj][Compression] Warn: Unable to initialize compression.");
+            N.compression = false;
+        }
     }
 };
 
@@ -277,10 +286,4 @@ class Compression {
     }
 }
 N.autoGc();
-
-try {
-    if (Compression.decode(Compression.encode('hello-world. 你好世界。')) != 'hello-world. 你好世界。') throw "Compression Error";
-} catch (err) {
-    if (N.debug) console.log("[Noaj][Compression] Warn: Unable to initialize compression.");
-    N.compression = false;
-}
+N.compressionDetect();
