@@ -5,6 +5,9 @@ interface IN {
     compression: boolean;
     secured: boolean;
     maxIdle: number;
+    maxConnections: number;
+    requestQueue: Array<Noaj.Request>;
+    requestQueueLock: boolean;
     connections: Array<Noaj.Connection>;
     gc(): void;
     autoGc(): void;
@@ -18,6 +21,9 @@ var N: IN = {
     debug: false,
     compression: false,
     maxIdle: 1,
+    maxConnections: 0, // Leave 0 if there is no limit to max connections.
+    requestQueue: [],
+    requestQueueLock: false,
     secured: false,
     connections: [],
     request: function (param: Noaj.IRequest) {
@@ -45,6 +51,7 @@ var N: IN = {
             if (N.debug) totalCount++;
         }
         if (N.debug) console.log("[Noaj][GC] Info: Collected: " + collectCount + ", Total: " + totalCount)
+        Noaj.Request.sendQueue();
     },
     autoGcInterval: 5000,
     autoGc: function () {
@@ -98,20 +105,21 @@ module Noaj {
                     }
                 }
                 if (this.connection == null) {
-                    this.connection = new Noaj.Connection(N.url)
-                    N.connections.push(this.connection);
+                    if (!N.connections && N.connections.length >= N.maxConnections) {
+                        N.requestQueue.push(this);
+                    } else {
+                        this.connection = new Noaj.Connection(N.url)
+                        N.connections.push(this.connection);
+                    }
                 }
                 this.connection.finished = false;
-                if (N.compression) {
-                    var compressed: ArrayBuffer = new ArrayBuffer(0);
-                    try {
-                        compressed = Compression.encode(JSON.stringify({
-                            route: this.route,
-                            data: this.data
-                        }));
-                    } catch (err) { }
-                }
-                if (N.compression && compressed.byteLength != 0) {
+
+                try {
+                    if (!N.compression) throw "Compression not enable";
+                    var compressed: ArrayBuffer = Compression.encode(JSON.stringify({
+                        route: this.route,
+                        data: this.data
+                    }));
                     this.connection.socket.send(compressed);
                     this.connection.socket.onmessage = function (ev: MessageEvent) {
                         if (typeof ev.data === "string") {
@@ -121,7 +129,8 @@ module Noaj {
                         }
                         this.connection.finished = true;
                     }.bind(this);
-                } else {
+                } catch (err) {
+                    // Fallback to uncompressed data
                     this.connection.socket.send(JSON.stringify({
                         route: this.route,
                         data: this.data
@@ -129,25 +138,46 @@ module Noaj {
                     this.connection.socket.onmessage = function (ev: MessageEvent) {
                         if (typeof ev.data === "string") {
                             this.success(ev.data);
+                            Noaj.Request.sendQueue();
                         } else {
                             this.success(Compression.decode(ev.data));
+                            Noaj.Request.sendQueue();
                         }
                         this.connection.finished = true;
                     }.bind(this);
                 }
+
                 this.connection.socket.onclose = function () {
                     this.connection.finished = true;
                     if (N.debug) console.log("[Noaj][WebSocket] Error: WebSocket closed unexpectedly.");
+                    Noaj.Request.sendQueue();
                 }.bind(this);
                 this.connection.socket.onerror = function () {
                     this.connection.finished = true;
                     if (N.debug) console.log("[Noaj][WebSocket] Error: WebSocket has met an unexpected problem.");
+                    Noaj.Request.sendQueue();
                 }
                 return true;
             } catch (error) {
                 if (N.debug) console.log("[Noaj][WebSocket] Error: Unable to proceed with WebSocket, falling back to AJAX. " + error)
                 this.fallbackSend();
                 return false;
+            }
+        }
+
+        static sendQueue() {
+            if (N.requestQueueLock) return;
+            if (N.maxConnections != 0) {
+                N.requestQueueLock = true;
+                var queueLength = N.requestQueue.length;
+                for (var i = 0; i < queueLength; i++) {
+                    var e = N.requestQueue[i];
+                    e.send();
+                    N.requestQueue.shift();
+                    queueLength--;
+                    i--;
+                }
+                N.requestQueueLock = false;
             }
         }
 
@@ -247,3 +277,10 @@ class Compression {
     }
 }
 N.autoGc();
+
+try {
+    if (Compression.decode(Compression.encode('hello-world. 你好世界。')) != 'hello-world. 你好世界。') throw "Compression Error";
+} catch (err) {
+    if (N.debug) console.log("[Noaj][Compression] Warn: Unable to initialize compression.");
+    N.compression = false;
+}
