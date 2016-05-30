@@ -16,7 +16,7 @@ describe('Compression Engine', function () {
             .toEqual('我能吞下玻璃而不伤身体。');
     });
 
-    it('\'s compression rate must be no bigger than 1', function () {
+    it('\'s compression rate must be no larger than 1', function () {
         expect(Compression.benchmark('Hello World.'))
             .not.toBeGreaterThan(1);
         expect(Compression.benchmark('Tinky-winky, Dipsy, Lala, Po.'))

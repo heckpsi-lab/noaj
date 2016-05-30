@@ -88,7 +88,7 @@ var Noaj;
                         break;
                     }
                 }
-                if (this.connection == null) {
+                if (this.connection === null) {
                     if (!N.connections && N.connections.length >= N.maxConnections) {
                         N.requestQueue.push(this);
                     }
@@ -180,11 +180,11 @@ var Noaj;
                     data: this.data
                 }));
                 ajaxRequest.onreadystatechange = function () {
-                    if (ajaxRequest.readyState == 4 &&
-                        ajaxRequest.status == 200) {
+                    if (ajaxRequest.readyState === 4 &&
+                        ajaxRequest.status === 200) {
                         this.success(ajaxRequest.responseText);
                     }
-                    else if (ajaxRequest.readyState == 4) {
+                    else if (ajaxRequest.readyState === 4) {
                         if (N.debug)
                             console.log("[Noaj][AJAX] Error: AJAX has returned with an unsuccessful result.");
                     }
